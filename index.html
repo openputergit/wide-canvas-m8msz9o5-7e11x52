@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        .modal {
+            transition: opacity 0.3s ease-in-out;
+            backdrop-filter: blur(5px);
+        }
+        .notification {
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="min-h-screen flex items-center justify-center">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-96">
+            <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Admin Login</h2>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700">Username</label>
+                    <input type="text" id="username" class="w-full p-2 border rounded-md" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700">Password</label>
+                    <input type="password" id="password" class="w-full p-2 border rounded-md" required>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Screen (Initially Hidden) -->
+    <div id="dashboardScreen" class="hidden min-h-screen bg-gray-100">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-lg">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <span class="text-xl font-bold text-gray-800">Admin Dashboard</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span id="userDisplay" class="text-gray-600"></span>
+                        <button id="logoutBtn" class="text-red-600 hover:text-red-800">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Tab Navigation -->
+        <div class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex space-x-8">
+                    <button class="tab-btn py-4 px-2 border-b-2 border-blue-500 font-medium text-sm text-blue-600" data-tab="dashboard">Dashboard</button>
+                    <button class="tab-btn py-4 px-2 border-b-2 border-transparent font-medium text-sm text-gray-600 hover:text-gray-800 hover:border-gray-300" data-tab="projects">Projects</button>
+                    <button class="tab-btn py-4 px-2 border-b-2 border-transparent font-medium text-sm text-gray-600 hover:text-gray-800 hover:border-gray-300" data-tab="reports">Reports</button>
+                    <button class="tab-btn py-4 px-2 border-b-2 border-transparent font-medium text-sm text-gray-600 hover:text-gray-800 hover:border-gray-300" data-tab="settings">Settings</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <!-- Dashboard Tab -->
+            <div id="dashboardTab" class="tab-content active">
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h3 class="text-lg font-semibold mb-2">Total Profit</h3>
+                        <p class="text-3xl font-bold text-green-600">₹50,000</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h3 class="text-lg font-semibold mb-2">Total Loss</h3>
+                        <p class="text-3xl font-bold text-red-600">₹20,000</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h3 class="text-lg font-semibold mb-2">Active Projects</h3>
+                        <p class="text-3xl font-bold text-blue-600">12</p>
+                    </div>
+                </div>
+
+                <!-- Shift Data -->
+                <div class="bg-white rounded-lg shadow p-6 mb-6">
+                    <h3 class="text-xl font-semibold mb-4">Shift-wise Performance</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="border rounded-lg p-4">
+                            <h4 class="font-semibold">Shift A</h4>
+                            <p class="text-green-600">Profit: ₹20,000</p>
+                            <p>Efficiency: 85%</p>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-600">Collections: ₹35,000</p>
+                                <p class="text-sm text-gray-600">Expenses: ₹15,000</p>
+                            </div>
+                        </div>
+                        <div class="border rounded-lg p-4">
+                            <h4 class="font-semibold">Shift B</h4>
+                            <p class="text-green-600">Profit: ₹18,000</p>
+                            <p>Efficiency: 82%</p>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-600">Collections: ₹30,000</p>
+                                <p class="text-sm text-gray-600">Expenses: ₹12,000</p>
+                            </div>
+                        </div>
+                        <div class="border rounded-lg p-4">
+                            <h4 class="font-semibold">Shift C</h4>
+                            <p class="text-red-600">Loss: ₹8,000</p>
+                            <p>Efficiency: 65%</p>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-600">Collections: ₹12,000</p>
+                                <p class="text-sm text-gray-600">Expenses: ₹20,000</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activities -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-xl font-semibold mb-4">Recent Activities</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-center text-sm">
+                            <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                            <span class="text-gray-600 mr-2">Today, 10:30 AM</span>
+                            <span>Project B collection updated</span>
+                        </li>
+                        <li class="flex items-center text-sm">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                            <span class="text-gray-600 mr-2">Yesterday, 4:15 PM</span>
+                            <span>New user added to Project C</span>
+                        </li>
+                        <li class="flex items-center text-sm">
+                            <span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
+                            <span class="text-gray-600 mr-2">Yesterday, 2:00 PM</span>
+                            <span>Shift C reported equipment failure</span>
+                        </li>
+                        <li class="flex items-center text-sm">
+                            <span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                            <span class="text-gray-600 mr-2">2 days ago, 9:20 AM</span>
+                            <span>New project "Project D" added</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Projects Tab -->
+            <div id="projectsTab" class="tab-content">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold">Project Management</h3>
+                        <button id="addProjectBtn" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                            <i class="bi bi-plus"></i> Add Project
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full table-auto">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="px-6 py-3 text-left">Project Name</th>
+                                    <th class="px-6 py-3 text-left">Status</th>
+                                    <th class="px-6 py-3 text-left">Profit/Loss</th>
+                                    <th class="px-6 py-3 text-left">Documents</th>
+                                    <th class="px-6 py-3 text-left">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="projectTableBody">
+                                <!-- Projects will be dynamically added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Tab -->
+            <div id="reportsTab" class="tab-content">
+                <div class="bg-white rounded-lg shadow p-6 mb-6">
+                    <h3 class="text-xl font-semibold mb-4">Generate Reports</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="border rounded-lg p-4">
+                            <h4 class="font-semibold mb-3">Project Reports</h4>
+                            <form class="space-y-3">
+                                <div>
+                                    <label class="block text-gray-700 mb-1">Select Project</label>
+                                    <select class="w-full p-2 border rounded-md">
+                                        <option>All Projects</option>
+                                        <option>Project A</option>
+                                        <option>Project B</option>
+                                        <option>Project C</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-1">Date Range</label>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <input type="date" class="p-2 border rounded-md">
+                                        <input type="date" class="p-2 border rounded-md">
+                                    </div>
+                                </div>
+                                <button type="button" class="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700">Generate Report</button>
+                            </form>
+                        </div>
+                        <div class="border rounded-lg p-4">
+                            <h4 class="font-semibold mb-3">Shift Reports</h4>
+                            <form class="space-y-3">
+                                <div>
+                                    <label class="block text-gray-700 mb-1">Select Shift</label>
+                                    <select class="w-full p-2 border rounded-md">
+                                        <option>All Shifts</option>
+                                        <option>Shift A</option>
+                                        <option>Shift B</option>
+                                        <option>Shift C</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-1">Date Range</label>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <input type="date" class="p-2 border rounded-md">
+                                        <input type="date" class="p-2 border rounded-md">
+                                    </div>
+                                </div>
+                                <button type="button" class="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700">Generate Report</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-xl font-semibold mb-4">Recent Reports</h3>
+                    <ul class="divide-y">
+                        <li class="py-3 flex justify-between items-center">
+                            <div>
+                                <p class="font-medium">Monthly Project Summary</p>
+                                <p class="text-sm text-gray-600">Generated on: May 1, 2023</p>
+                            </div>
+                            <button class="text-blue-600 hover:text-blue-800">
+                                <i class="bi bi-download"></i> Download
+                            </button>
+                        </li>
+                        <li class="py-3 flex justify-between items-center">
+                            <div>
+                                <p class="font-medium">Shift Performance Report</p>
+                                <p class="text-sm text-gray-600">Generated on: April 25, 2023</p>
+                            </div>
+                            <button class="text-blue-600 hover:text-blue-800">
+                                <i class="bi bi-download"></i> Download
+                            </button>
+                        </li>
+                        <li class="py-3 flex justify-between items-center">
+                            <div>
+                                <p class="font-medium">Project A Detailed Analysis</p>
+                                <p class="text-sm text-gray-600">Generated on: April 15, 2023</p>
+                            </div>
+                            <button class="text-blue-600 hover:text-blue-800">
+                                <i class="bi bi-download"></i> Download
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settingsTab" class="tab-content">
+                <div class="bg-white rounded-lg shadow p-6 mb-6">
+                    <h3 class="text-xl font-semibold mb-4">Account Settings</h3>
+                    <form class="space-y-4">
+                        <div>
+                            <label class="block text-gray-700">Username</label>
+                            <input type="text" value="Umesh" class="w-full p-2 border rounded-md" disabled>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700">Current Password</label>
+                            <input type="password" class="w-full p-2 border rounded-md">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700">New Password</label>
+                            <input type="password" class="w-full p-2 border rounded-md">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700">Confirm New Password</label>
+                            <input type="password" class="w-full p-2 border rounded-md">
+                        </div>
+                        <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Change Password</button>
+                    </form>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-xl font-semibold mb-4">User Management</h3>
+                    <div class="mb-4">
+                        <button class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                            <i class="bi bi-person-plus"></i> Add New User
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full table-auto">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="px-6 py-3 text-left">Username</th>
+                                    <th class="px-6 py-3 text-left">Role</th>
+                                    <th class="px-6 py-3 text-left">Projects</th>
+                                    <th class="px-6 py-3 text-left">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-t">
+                                    <td class="px-6 py-4">Rajesh</td>
+                                    <td class="px-6 py-4">Data Entry</td>
+                                    <td class="px-6 py-4">Project A, Project C</td>
+                                    <td class="px-6 py-4">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="text-red-600 hover:text-red-800">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="border-t">
+                                    <td class="px-6 py-4">Suresh</td>
+                                    <td class="px-6 py-4">Shift Manager</td>
+                                    <td class="px-6 py-4">All Projects</td>
+                                    <td class="px-6 py-4">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="text-red-600 hover:text-red-800">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="border-t">
+                                    <td class="px-6 py-4">Priya</td>
+                                    <td class="px-6 py-4">Data Entry</td>
+                                    <td class="px-6 py-4">Project B</td>
+                                    <td class="px-6 py-4">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="text-red-600 hover:text-red-800">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Project Modal -->
+    <div id="addProjectModal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 w-96 max-w-full mx-4">
+            <h3 class="text-xl font-semibold mb-4">Add New Project</h3>
+            <form id="addProjectForm" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700">Project Name</label>
+                    <input type="text" class="w-full p-2 border rounded-md" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700">Status</label>
+                    <select class="w-full p-2 border rounded-md">
+                        <option>Active</option>
+                        <option>On Hold</option>
+                        <option>Completed</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700">Project Manager</label>
+                    <select class="w-full p-2 border rounded-md">
+                        <option>Suresh</option>
+                        <option>Rajesh</option>
+                        <option>Priya</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700">Start Date</label>
+                    <input type="date" class="w-full p-2 border rounded-md">
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="cancelAddProject" class="px-4 py-2 border rounded-md">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View/Edit Project Modal -->
+    <div id="projectDetailModal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-2xl mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold" id="projectDetailTitle">Project Details</h3>
+                <button id="closeProjectDetail" class="text-gray-500 hover:text-gray-800">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <div class="mb-6">
+                <!-- Project Tabs -->
+                <div class="border-b">
+                    <div class="flex space-x-4">
+                        <button class="project-tab-btn py-2 px-4 border-b-2 border-blue-500 font-medium text-sm text-blue-600" data-tab="overview">Overview</button>
+                        <button class="project-tab-btn py-2 px-4 border-b-2 border-transparent font-medium text-sm text-gray-600" data-tab="shifts">Shifts</button>
+                        <button class="project-tab-btn py-2 px-4 border-b-2 border-transparent font-medium text-sm text-gray-600" data-tab="documents">Documents</button>
+                    </div>
+                </div>
+
+                <!-- Project Tab Contents -->
+                <div class="py-4">
+                    <!-- Overview Tab -->
+                    <div id="overviewTab" class="project-tab-content active">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Project Name</p>
+                                <p class="text-lg" id="projectName">Project A</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Status</p>
+                                <p class="text-lg" id="projectStatus">Active</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Start Date</p>
+                                <p class="text-lg" id="projectStartDate">Jan 15, 2023</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Project Manager</p>
+                                <p class="text-lg" id="projectManager">Suresh</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <p class="text-sm font-medium text-gray-500 mb-2">Financial Summary</p>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="border rounded-lg p-3">
+                                    <p class="font-medium">Total Collections</p>
+                                    <p class="text-xl text-green-600">₹75,000</p>
+                                </div>
+                                <div class="border rounded-lg p-3">
+                                    <p class="font-medium">Total Expenses</p>
+                                    <p class="text-xl text-red-600">₹50,000</p>
+                                </div>
+                                <div class="border rounded-lg p-3">
+                                    <p class="font-medium">Net Profit/Loss</p>
+                                    <p class="text-xl text-green-600">₹25,000</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shifts Tab -->
+                    <div id="shiftsTab" class="project-tab-content hidden">
+                        <div class="space-y-6">
+                            <div class="border rounded-lg p-4">
+                                <h4 class="font-semibold mb-3">Shift A</h4>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-500">Collections</p>
+                                        <p class="text-lg text-green-600">₹35,000</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-500">Expenses</p>
+                                        <p class="text-lg text-red-600">₹15,000</p>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <p class="text-sm font-medium text-gray-500">Shift Manager</p>
+                                    <p class="text-lg">Rajesh</p>
+                                </div>
+                            </div>
+                            
+                            <div class="border rounded-lg p-4">
+                                <h4 class="font-semibold mb-3">Shift B</h4>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-500">Collections</p>
+                                        <p class="text-lg text-green-600">₹30,000</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-500">Expenses</p>
+                                        <p class="text-lg text-red-600">₹25,000</p>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <p class="text-sm font-medium text-gray-500">Shift Manager</p>
+                                    <p class="text-lg">Suresh</p>
+                                </div>
+                            </div>
+                            
+                            <div class="border rounded-lg p-4">
+                                <h4 class="font-semibold mb-3">Shift C</h4>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-500">Collections</p>
+                                        <p class="text-lg text-green-600">₹10,000</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-500">Expenses</p>
+                                        <p class="text-lg text-red-600">₹10,000</p>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <p class="text-sm font-medium text-gray-500">Shift Manager</p>
+                                    <p class="text-lg">Priya</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Documents Tab -->
+                    <div id="documentsTab" class="project-tab-content hidden">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="font-semibold">Project Documents</h4>
+                            <button class="px-3 py-1.5 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
+                                <i class="bi bi-upload"></i> Upload Document
+                            </button>
+                        </div>
+                        
+                        <ul class="divide-y">
+                            <li class="py-3 flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <i class="bi bi-file-pdf text-red-500 text-xl mr-2"></i>
+                                    <div>
+                                        <p class="font-medium">Project Contract.pdf</p>
+                                        <p class="text-xs text-gray-500">Uploaded on: March 15, 2023</p>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-800">
+                                        <i class="bi bi-download"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-800">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </li>
+                            <li class="py-3 flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <i class="bi bi-file-excel text-green-500 text-xl mr-2"></i>
+                                    <div>
+                                        <p class="font-medium">Budget Calculations.xlsx</p>
+                                        <p class="text-xs text-gray-500">Uploaded on: March 10, 2023</p>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-800">
+                                        <i class="bi bi-download"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-800">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </li>
+                            <li class="py-3 flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <i class="bi bi-file-text text-blue-500 text-xl mr-2"></i>
+                                    <div>
+                                        <p class="font-medium">Progress Report.docx</p>
+                                        <p class="text-xs text-gray-500">Uploaded on: February 28, 2023</p>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-800">
+                                        <i class="bi bi-download"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-800">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-2">
+                <button type="button" class="px-4 py-2 border rounded-md" id="cancelProjectDetail">Close</button>
+                <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-md shadow-lg notification z-50">
+        <span id="notificationMessage"></span>
+    </div>
+
+    <script>
+        // Sample project data
+        const projects = [
+            { name: "Project A", status: "Active", profitLoss: 15000, documents: 5 },
+            { name: "Project B", status: "On Hold", profitLoss: -5000, documents: 3 },
+            { name: "Project C", status: "Completed", profitLoss: 25000, documents: 8 }
+        ];
+
+        // DOM Elements
+        const loginScreen = document.getElementById('loginScreen');
+        const dashboardScreen = document.getElementById('dashboardScreen');
+        const loginForm = document.getElementById('loginForm');
+        const userDisplay = document.getElementById('userDisplay');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const addProjectBtn = document.getElementById('addProjectBtn');
+        const addProjectModal = document.getElementById('addProjectModal');
+        const cancelAddProject = document.getElementById('cancelAddProject');
+        const addProjectForm = document.getElementById('addProjectForm');
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notificationMessage');
+        const projectTableBody = document.getElementById('projectTableBody');
+        const projectDetailModal = document.getElementById('projectDetailModal');
+        const closeProjectDetail = document.getElementById('closeProjectDetail');
+        const cancelProjectDetail = document.getElementById('cancelProjectDetail');
+
+        // Login Handler
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === 'Umesh' && password === '123') {
+                loginScreen.classList.add('hidden');
+                dashboardScreen.classList.remove('hidden');
+                userDisplay.textContent = `Welcome, ${username}`;
+                showNotification('Login successful!');
+                renderProjects();
+            } else {
+                showNotification('Invalid credentials!', 'red');
+            }
+        });
+
+        // Logout Handler
+        logoutBtn.addEventListener('click', () => {
+            dashboardScreen.classList.add('hidden');
+            loginScreen.classList.remove('hidden');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        });
+
+        // Project Modal Handlers
+        addProjectBtn.addEventListener('click', () => {
+            addProjectModal.classList.remove('hidden');
+        });
+
+        cancelAddProject.addEventListener('click', () => {
+            addProjectModal.classList.add('hidden');
+        });
+
+        addProjectForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            addProjectModal.classList.add('hidden');
+            showNotification('Project added successfully!');
+        });
+
+        closeProjectDetail.addEventListener('click', () => {
+            projectDetailModal.classList.add('hidden');
+        });
+
+        cancelProjectDetail.addEventListener('click', () => {
+            projectDetailModal.classList.add('hidden');
+        });
+
+        // Tab Navigation
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabName = btn.dataset.tab;
+                
+                // Remove active class from all tab buttons and contents
+                tabBtns.forEach(b => {
+                    b.classList.remove('border-blue-500', 'text-blue-600');
+                    b.classList.add('border-transparent', 'text-gray-600');
+                });
+                
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Add active class to selected tab button and content
+                btn.classList.add('border-blue-500', 'text-blue-600');
+                btn.classList.remove('border-transparent', 'text-gray-600');
+                document.getElementById(`${tabName}Tab`).classList.add('active');
+            });
+        });
+
+        // Project Detail Tab Navigation
+        const projectTabBtns = document.querySelectorAll('.project-tab-btn');
+        const projectTabContents = document.querySelectorAll('.project-tab-content');
+
+        projectTabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabName = btn.dataset.tab;
+                
+                // Remove active class from all tab buttons and contents
+                projectTabBtns.forEach(b => {
+                    b.classList.remove('border-blue-500', 'text-blue-600');
+                    b.classList.add('border-transparent', 'text-gray-600');
+                });
+                
+                projectTabContents.forEach(content => {
+                    content.classList.add('hidden');
+                    content.classList.remove('active');
+                });
+                
+                // Add active class to selected tab button and content
+                btn.classList.add('border-blue-500', 'text-blue-600');
+                btn.classList.remove('border-transparent', 'text-gray-600');
+                
+                const activeTab = document.getElementById(`${tabName}Tab`);
+                activeTab.classList.remove('hidden');
+                activeTab.classList.add('active');
+            });
+        });
+
+        // Render Projects
+        function renderProjects() {
+            projectTableBody.innerHTML = projects.map(project => `
+                <tr class="border-t">
+                    <td class="px-6 py-4">${project.name}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 rounded-full ${project.status === 'Active' ? 'bg-green-100 text-green-800' : project.status === 'On Hold' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'}">
+                            ${project.status}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 ${project.profitLoss >= 0 ? 'text-green-600' : 'text-red-600'}">
+                        ₹${Math.abs(project.profitLoss).toLocaleString()}
+                    </td>
+                    <td class="px-6 py-4">${project.documents}</td>
+                    <td class="px-6 py-4">
+                        <button class="text-blue-600 hover:text-blue-800 mr-2 view-project-btn">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        <button class="text-blue-600 hover:text-blue-800 mr-2">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-800">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Add event listeners to view project buttons
+            const viewProjectBtns = document.querySelectorAll('.view-project-btn');
+            viewProjectBtns.forEach((btn, index) => {
+                btn.addEventListener('click', () => {
+                    // Show project detail modal
+                    projectDetailModal.classList.remove('hidden');
+                    document.getElementById('projectDetailTitle').textContent = projects[index].name;
+                    document.getElementById('projectName').textContent = projects[index].name;
+                    document.getElementById('projectStatus').textContent = projects[index].status;
+                });
+            });
+        }
+
+        // Notification Handler
+        function showNotification(message, color = 'green') {
+            notification.style.backgroundColor = color === 'green' ? '#10B981' : '#EF4444';
+            notificationMessage.textContent = message;
+            notification.classList.remove('hidden');
+            setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Initialize the project table on load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProjects();
+        });
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
